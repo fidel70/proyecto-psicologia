@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tablero de Ajedrez</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+    <style>
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .title {
+            text-align: center;
+            width: 100%;
+        }
+        .game-info {
+            text-align: center;
+            margin: 20px 0;
+            width: 100%;
+        }
+        .board {
+            width: 400px;
+        }
+        .moves {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .moves h2 {
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .moves-list {
+            font-family: monospace;
+            line-height: 1.5;
+        }
+        .move-number {
+            color: #666;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="tablero-de-ajedrez" class="title">Tablero de Ajedrez</h1>
+
+        <div id="gameInfo" class="game-info">
+            Turno de las Blancas
+        </div>
+
+        <div id="board" class="board"></div>
+        
+        <div class="moves">
+            <h2>Movimientos</h2>
+            <div id="movesList" class="moves-list"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <script>
+        let board = null;
+        let game = new Chess();
+        let moveCount = 1;
+
+        function onDragStart(source, piece, position, orientation) {
+            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+                return false;
+            }
+        }
+
+        function updateMovesList(move) {
+            const movesList = document.getElementById('movesList');
+            
+            if (game.turn() === 'w') { // Si es turno de las blancas, significa que el último movimiento fue de las negras
+                movesList.innerHTML += `<span class="move-number">${moveCount}.</span>${move} `;
+                moveCount++;
+            } else { // Si es turno de las negras, significa que el último movimiento fue de las blancas
+                movesList.innerHTML += `${move}<br>`;
+            }
+            
+            // Hacer scroll hacia abajo para mostrar el último movimiento
+            movesList.scrollTop = movesList.scrollHeight;
+        }
+
+        function onDrop(source, target) {
+            const move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q'
+            });
+
+            if (move === null) return 'snapback';
+            
+            updateMovesList(move.san); // Agregar la notación del movimiento
+            updateStatus();
+        }
+
+        function updateStatus() {
+            let status = '';
+
+            if (game.in_checkmate()) {
+                status = game.turn() === 'w' ? '¡Ganan las Negras!' : '¡Ganan las Blancas!';
+            } else if (game.in_draw()) {
+                status = '¡Juego empatado!';
+            } else {
+                status = game.turn() === 'w' ? 'Turno de las Blancas' : 'Turno de las Negras';
+                if (game.in_check()) {
+                    status += ' - ¡Jaque!';
+                }
+            }
+
+            document.getElementById('gameInfo').textContent = status;
+        }
+
+        // Inicializar el tablero al cargar la página
+        window.addEventListener('load', function() {
+            const config = {
+                draggable: true,
+                position: 'start',
+                onDragStart: onDragStart,
+                onDrop: onDrop,
+                pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+            };
+            board = Chessboard('board', config);
+        });
+    </script>
+</body>
+</html>

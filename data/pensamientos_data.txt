@@ -1,0 +1,20 @@
+id|codigo|pensamiento
+1|P001-PS001|Luis es un homosexual que me ha malogrado la vida. Habla mal de mi al vecindario
+2|P001-PS002|Pochito se vengó de mi con astucia calculada
+4|P001-PS003|El vecindario me rechaza xq soy loco
+5|P001-PS004|Mi hermano Marcial no me quiere y solo espera que me muera
+6|P001-PS005|La mayoría de las mujeres piensan que soy viejo y feo, y a veces tonto.
+7|P001-PS006|Javicho es un esperpento que ha venido al barrio para secundar a Pochito como su fiel seguidor y para joderme
+8|P001-PS007|Alguna mujeres del barrio piensan que soy gay
+12|P001-PS008|Mi vecino de la casa de la Sra. Olinda piensan que toco feo la guitarra cuando estoy tocándola.
+13|P001-PS009|Mis amigos de la cuadra, tanto el Sr. Abraham y el Sr. Victor ya no me saludan porque saben que estoy loco.
+14|P001-PS010|Mi insomnio me va a envejecer más rápido y moriré pronto.
+16|P001-PS012|Creo que puedo tener cáncer al colon porque mis excrementos están insalubres.
+17|P001-PS013|Moriré virgen
+18|P001-PS014|Nunca debí ilusionarme con la hija del Sr. Abraham. Debí haber visto mi cruda realidad.
+19|P001-PS015|A veces creo que mi papá no me quiere lo suficiente.
+20|P001-PS016|Estoy viejo, me veo cada vez más acabado
+21|P001-PS017|La "Carnerito" más conocida como la "peluda" me desprecia
+22|P001-PS018|El pastrulo viejo Rafael Loret vive para joderme en el barrio.
+10|P002-PS001|Mi vecina piensa que soy enfermo mental
+11|P002-PS002|Mis amigos quieren que tome para que se moje la canoa.

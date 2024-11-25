@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tablero de Ajedrez</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .title {
+            text-align: center;
+        }
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        .button-container button {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+        .game-info {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .board {
+            width: 400px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="tablero-de-ajedrez" class="title">Tablero de Ajedrez</h1>
+
+        <div class="button-container">
+            <button onclick="selectColor('w')">Blancas</button>
+            <button onclick="selectColor('b')">Negras</button>
+            <button onclick="startGame()">Jugar</button>
+        </div>
+
+        <div id="gameInfo" class="game-info">
+            Selecciona color y presiona Jugar para comenzar
+        </div>
+
+        <div id="board" class="board"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <script>
+        let board = null;
+        let game = new Chess();
+        let playerColor = 'w';
+        let gameStarted = false;
+
+        // Definir la ruta base para las piezas
+        const piecesPath = 'img/chesspieces/wikipedia/';
+
+        // Función para verificar si una imagen existe
+        function imageExists(url) {
+            const img = new Image();
+            img.src = url;
+            return img.complete;
+        }
+
+        function getPieceTheme(piece) {
+            // Intentar primero con la ruta local
+            if (imageExists(`${piecesPath}${piece}.png`)) {
+                return `${piecesPath}${piece}.png`;
+            }
+            // Si la imagen local no existe, usar una CDN alternativa
+            return `https://chessboardjs.com/img/chesspieces/wikipedia/${piece}.png`;
+        }
+
+        function selectColor(color) {
+            playerColor = color;
+            document.getElementById('gameInfo').textContent = 
+                `Has seleccionado las ${color === 'w' ? 'Blancas' : 'Negras'}. Presiona Jugar para comenzar.`;
+        }
+
+        function startGame() {
+            if (board) {
+                board.destroy();
+            }
+            game = new Chess();
+            gameStarted = true;
+            
+            const config = {
+                draggable: true,
+                position: 'start',
+                orientation: playerColor === 'w' ? 'white' : 'black',
+                onDragStart: onDragStart,
+                onDrop: onDrop,
+                onSnapEnd: onSnapEnd,
+                pieceTheme: getPieceTheme
+            };
+            
+            board = Chessboard('board', config);
+            updateStatus();
+        }
+
+        function onDragStart(source, piece) {
+            if (!gameStarted) return false;
+            
+            if ((playerColor === 'w' && piece.search(/^b/) !== -1) ||
+                (playerColor === 'b' && piece.search(/^w/) !== -1)) {
+                return false;
+            }
+            
+            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+                return false;
+            }
+        }
+
+        function onDrop(source, target) {
+            const move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q'
+            });
+
+            if (move === null) return 'snapback';
+        }
+
+        function onSnapEnd() {
+            updateStatus();
+        }
+
+        function updateStatus() {
+            let status = '';
+
+            if (game.in_checkmate()) {
+                status = game.turn() === 'w' ? '¡Ganan las Negras!' : '¡Ganan las Blancas!';
+            } else if (game.in_draw()) {
+                status = '¡Juego empatado!';
+            } else {
+                status = game.turn() === 'w' ? 'Turno de las Blancas' : 'Turno de las Negras';
+                if (game.in_check()) {
+                    status += ' - ¡Jaque!';
+                }
+            }
+
+            document.getElementById('gameInfo').textContent = status;
+        }
+
+        // Inicializar el tablero al cargar la página
+        window.addEventListener('load', function() {
+            const config = {
+                position: 'start',
+                pieceTheme: getPieceTheme
+            };
+            board = Chessboard('board', config);
+        });
+    </script>
+</body>
+</html>

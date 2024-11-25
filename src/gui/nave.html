@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mi Juego de Naves</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <script>
+    const config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 600,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 0 },
+                debug: false
+            }
+        },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    const game = new Phaser.Game(config);
+    
+    let ship;
+    let cursors;
+    const SHIP_SPEED = 300;
+
+    function preload() {
+        // Creamos una nave más grande y simple
+        const graphics = this.add.graphics();
+        
+        // Rellenamos primero con un color sólido
+        graphics.fillStyle(0x00ff00, 1);  // Verde brillante
+        graphics.lineStyle(4, 0xffffff);  // Borde blanco grueso
+        
+        // Dibujamos un triángulo grande
+        graphics.beginPath();
+        graphics.moveTo(0, -40);      // Punta de la nave
+        graphics.lineTo(30, 40);      // Esquina derecha
+        graphics.lineTo(-30, 40);     // Esquina izquierda
+        graphics.closePath();
+        graphics.fillPath();          // Primero rellenamos
+        graphics.strokePath();        // Luego dibujamos el borde
+
+        // Añadimos una "cabina"
+        graphics.fillStyle(0x0000ff, 1);  // Azul brillante
+        graphics.fillCircle(0, 0, 10);
+        graphics.lineStyle(2, 0xffffff);
+        graphics.strokeCircle(0, 0, 10);
+        
+        // Convertimos el gráfico en una textura
+        graphics.generateTexture('ship', 100, 100);
+        graphics.destroy();
+    }
+
+    function create() {
+        // Añadimos un fondo de estrellas
+        for (let i = 0; i < 100; i++) {
+            const x = Phaser.Math.Between(0, 800);
+            const y = Phaser.Math.Between(0, 600);
+            this.add.circle(x, y, 1, 0xffffff);
+        }
+
+        // Creamos la nave en el centro de la pantalla
+        ship = this.physics.add.sprite(400, 300, 'ship');
+        ship.setCollideWorldBounds(true);
+        
+        // Configuramos los controles
+        cursors = this.input.keyboard.createCursorKeys();
+
+        // Añadimos el efecto de propulsor
+        const particles = this.add.particles(0, 0, {
+            follow: ship,
+            followOffset: { x: 0, y: 40 },
+            scale: { start: 0.5, end: 0 },
+            speed: { min: 100, max: 200 },
+            lifespan: 300,
+            frequency: 30,
+            quantity: 2,
+            blendMode: 'ADD',
+            tint: 0xff0000  // Rojo brillante
+        });
+    }
+
+    function update() {
+        // Reiniciamos la velocidad
+        ship.setVelocity(0);
+
+        // Control de movimiento
+        if (cursors.left.isDown) {
+            ship.setVelocityX(-SHIP_SPEED);
+            ship.angle = -15;
+        }
+        else if (cursors.right.isDown) {
+            ship.setVelocityX(SHIP_SPEED);
+            ship.angle = 15;
+        }
+        else {
+            ship.angle = 0;
+        }
+
+        if (cursors.up.isDown) {
+            ship.setVelocityY(-SHIP_SPEED);
+        }
+        else if (cursors.down.isDown) {
+            ship.setVelocityY(SHIP_SPEED);
+        }
+
+        // Movimiento diagonal más suave
+        if (ship.body.velocity.x !== 0 && ship.body.velocity.y !== 0) {
+            ship.body.velocity.normalize().scale(SHIP_SPEED);
+        }
+    }
+    </script>
+</body>
+</html>

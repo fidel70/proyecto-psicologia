@@ -1,0 +1,3 @@
+id|codigo|nombre|fecha_nacimiento|sexo|enfermedad|observaciones|fecha_registro
+1|P001|Fidel Leon|15/04/1970|M|Esquizofrenia Paranoide|nan|2024-11-19
+2|P002|Juan Perez|19/11/2024|M|Depresion|nan|2024-11-19
